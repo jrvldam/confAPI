@@ -114,7 +114,7 @@ function pintarForm(datos)
 	for(var keyGroup in datos.especificas)
 	{
 		// PINTA GRUPO
-		var _divGroup = $('<div></div>').attr({'name': keyGroup, 'class':'grupos'});
+		var _divGroup = $('<div></div>').attr({'name': keyGroup, 'class':'well'});
 		var _nameGroup = $('<input></input>').attr({'type':'text','size':'15','dislabed':'true'}).val(keyGroup);
 		var _btnGroup = $('<button></button').attr('type','button').text('-').click(function()
 			{
