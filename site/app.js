@@ -6,6 +6,7 @@ var swig = require('swig');
 var index = require('./routes/index');
 var getObj = require('./routes/getJson');
 var sendObj = require('./routes/sendJson');
+var sendDir = require('./routes/sendDir');
 
 var app = express();
 
@@ -26,6 +27,7 @@ app.use(express.static(__dirname + '/public'));
 app.use('/', index);
 app.use('/get', getObj);
 app.use('/datos', sendObj);
+app.use('/dir', sendDir);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

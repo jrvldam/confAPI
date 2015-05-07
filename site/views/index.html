@@ -7,46 +7,49 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
 	<style type="text/css">
 		.toHide{ display: none; }
-		.grupos{ border: 1px dotted #777; padding: 5px; }
 	</style>
 </head>
 <body>
 	<div class="container">
-		<div class="page-header">
-			<h3>Configuración de APIs</h3>
-			<button type="button" id="crear" class="btn btn-default">Crear</button>
-			<button type="button" id="editar" class="btn btn-default">Editar</button>
-			<input type="text" id="cajaAPI" placeholder="nombre de la conf." class="toHide">
-			<button  type="button" id="btnFind" class="toHide btn btn-info" disabled="true"><span class="glyphicon glyphicon-search"> </span></button>
-		</div>
-		<hr>
-		<form method="post" name="myForm" id="myForm" class="toHide form">
-			<h4></h4>
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					CONF. GENERALES
-				</div>
-				<div id="gnrl" class="panel-body"></div>
+		<div class="col-sm-8 col-sm-offset-2">
+			<div class="page-header text-center">
+				<h3>Configuración de APIs</h3>
+				<button type="button" id="crear" class="btn btn-default">Crear</button>
+				<button type="button" id="editar" class="btn btn-default">Editar</button>
+				<input type="text" id="cajaAPI" placeholder="nombre de la config." class="toHide" size="40">
+				<button  type="button" id="btnFind" class="toHide btn btn-info" disabled="true"><span class="glyphicon glyphicon-search"></span></button>
 			</div>
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h5>CONF. ESPECIFICAS 
-						<button type="button" id="masGroup" class="btn btn-primary btn-sm">
-							<span class="glyphicon glyphicon-plus-sign"> </span>
-						</button>
-						&nbsp;&nbsp;
-						<span id="newGroup" class="toHide">
-							<input type="text" name="newGroupName" id="newGroupName">
-							<button type="button" id="btnNewGroup" disabled="true" class="btn btn-success btn-sm">
-								<span class="glyphicon glyphicon-ok-sign"> </span>
+
+			<div id="listaDir" class="well well-info well-sm"></div>
+
+			<form method="post" name="myForm" id="myForm" class="toHide form">
+				<h4></h4>
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						CONF. GENERALES
+					</div>
+					<div id="gnrl" class="panel-body"></div>
+				</div>
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h5>CONF. ESPECIFICAS 
+							<button type="button" id="masGroup" class="btn btn-primary btn-sm">
+								<span class="glyphicon glyphicon-plus"></span>
 							</button>
-						</span>
-					</h5>
+							&nbsp;&nbsp;
+							<span id="newGroup" class="toHide form-group">
+								<input type="text" name="newGroupName" id="newGroupName">
+								<button type="button" id="btnNewGroup" disabled="true" class="btn btn-success btn-sm">
+									<span class="glyphicon glyphicon-ok"></span>
+								</button>
+							</span>
+						</h5>
+					</div>
+					<div id="espc" class="panel-body"></div>
 				</div>
-				<div id="espc" class="panel-body"></div>
-			</div>
-			<button type="button" id="guardar" class="btn btn-primary">Guardar</button>
-		</form>
+				<button type="button" id="guardar" class="btn btn-primary">Guardar</button>
+			</form>
+		</div>
 	</div>
 	<script type="text/javascript" src="javascripts/jquery-2.1.3.min.js"></script>
 	<script type="text/javascript" src="javascripts/index.js"></script>

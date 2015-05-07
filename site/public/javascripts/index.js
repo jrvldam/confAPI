@@ -2,6 +2,24 @@ var datos = {};
 
 $(document).ready(function()
 {
+	$.getJSON('/dir',function(lista)
+		{
+			console.log('lista: ' + JSON.stringify(lista));
+			var strLista = 'ficheros guardados:';
+			if(lista.error)
+			{
+				// HACER ALGOR
+			}
+			else
+			{
+				for(var i = 0; i < lista.length; i++)
+				{
+					var aux = lista[i].slice(0,-5);
+					i === 0? (strLista += ' ' + aux) : (strLista += ', ' + aux);
+				}
+				$('#listaDir').append('<small>' + strLista + '</small>');
+			}
+		});
 	// CREA CONF DE API NUEVA
 	$('#crear').click(function()
 		{
@@ -16,13 +34,14 @@ $(document).ready(function()
 			$("#gnrl").empty();
 			$("#espc").empty();
 			$("#cajaAPI").addClass("toHide");
+			$('#btnFind').addClass('toHide');
 			$("h4").text("");
 			pintarForm(datos);
 		});
 	// LLAMA Y EDITA CONF DE API
 	$("#editar").click(function()
 		{
-			$("#cajaAPI").removeClass("toHide").keyup(function()
+			$("#cajaAPI").toggle().focus().keyup(function()
 				{
 					if($('#cajaAPI').val().length > 0)
 					{
@@ -33,7 +52,7 @@ $(document).ready(function()
 						$('#btnFind').attr('disabled','true');
 					}
 				});
-			$('#btnFind').removeClass('toHide').click(function()
+			$('#btnFind').toggle().click(function()
 			{
 				var nomAPI = $.trim($("#cajaAPI").val());
 				if(nomAPI)
@@ -49,6 +68,7 @@ $(document).ready(function()
 							datos = datosIn;
 							pintarForm(datos);
 							$("#cajaAPI").toggle();
+							$('#btnFind').toggle();
 						}
 					});
 				}
@@ -57,22 +77,30 @@ $(document).ready(function()
 	// GUARDA LA CONF DE API
 	$('#guardar').click(function()
 		{
-			var cadena = JSON.stringify(datos);
-			console.log(' enviando: ' + typeof cadena);
-			$.ajax(
+			var uri = datos.generales.uri;
+			var txt = datos.generales.txtID;
+			if(uri.length > 0 && txt.length > 0)
 			{
-			  method: "POST",
-			  url: "/get",
-			  data: {datos: cadena}
-			})
-			.fail(function()
+				var cadena = JSON.stringify(datos);
+				$.ajax(
+				{
+				  method: "POST",
+				  url: "/get",
+				  data: {datos: cadena}
+				})
+				.fail(function()
+				{
+					alert('Se ha producido un error en la escritura :-(');
+				})
+				.done(function( mensaje ) 
+				{
+				    alert("Guardado: " + mensaje);
+				});
+			}
+			else
 			{
-				alert('ERROR EN LA ESCRITURA!');
-			})
-			.done(function( mensaje ) 
-			{
-			    alert("Guardado: " + mensaje);
-			});
+				alert("Los campos de 'uri' y 'txtID', son necesarios para guardar.");
+			}
 		});
 	// AGREGA UN NUEVO GRUPO A LAS CONF ESPECIFICAS
 	$('#masGroup').click(function()
@@ -109,9 +137,11 @@ function pintarForm(datos)
 	// PINTA CONF GENERALES
 	for(var keyGnrl in datos.generales)
 	{
+		var _group = $('<div></div>').addClass('form-group');
 		var _name = $('<input></input>').attr({'type':'text','size':'15','disabled':'true'}).val(keyGnrl);
-		var _value = $('<input></input>').attr({'type':'text', 'onblur':"gnrlEditada(this,'" + keyGnrl + "');"}).val(datos.generales[keyGnrl]);
-		$('#gnrl').append(_name, _value, '<br>');
+		var _value = $('<input></input>').attr({'type':'text', 'size':'40', 'required':'true', 'onblur':"gnrlEditada(this,'" + keyGnrl + "');"}).val(datos.generales[keyGnrl]);
+		_group.append(_name,'&nbsp;', _value);
+		$('#gnrl').append(_group);
 	}
 
 	// PINTA CONF ESPECIFICAS
@@ -120,7 +150,7 @@ function pintarForm(datos)
 		// PINTA GRUPO
 		var _divGroup = $('<div></div>').attr({'name': keyGroup, 'class':'well well-sm'});
 		var _nameGroup = $('<input></input>').attr({'type':'text','size':'15','dislabed':'true'}).val(keyGroup);
-		var _spanGroup = $('<span></span>').addClass('glyphicon glyphicon-remove-sign').text(' ');
+		var _spanGroup = $('<span></span>').addClass('glyphicon glyphicon-remove').text(' ');
 		var _btnGroup = $('<button></button').attr('type','button').addClass('btn btn-danger btn-xs').append(_spanGroup).click(function()
 			{
 				var aux = $(this).prev().val();
@@ -129,7 +159,7 @@ function pintarForm(datos)
 			});
 		var _cotenedor = $('<span></span>').addClass('toHide');
 		// GENERA LAS CAJAS PARA LOS NUEVOS ATRIBUTOS DEL GRUPO
-		var _spanNewGroup = $('<span></span>').addClass('glyphicon glyphicon-plus-sign').text(' ');
+		var _spanNewGroup = $('<span></span>').addClass('glyphicon glyphicon-plus').text(' ');
 		var _btnNewGroup = $('<button></button>').attr('type','button').addClass('btn btn-primary btn-sm').append(_spanNewGroup).click(function()
 			{
 				$(this).nextAll('span').empty().toggle(); 
@@ -146,7 +176,7 @@ function pintarForm(datos)
 					});
 				var _valor = $('<input></input>').attr({'type':'text','placeholder':'valor'});
 				// AGREGA ATRIBUTOS (NOMBRE, VALOR) AL GRUPO
-				var _spanBtn = $('<span></span>').addClass('glyphicon glyphicon-ok-sign').text(' ');
+				var _spanBtn = $('<span></span>').addClass('glyphicon glyphicon-ok').text(' ');
 				var _btn = $('<button></button>').attr({'type':'button','disabled':'true'}).addClass('btn btn-success btn-sm').append(_spanBtn).click(function()
 					{
 						// LISTA CON VALORES DE LOS INPUTS
@@ -164,13 +194,13 @@ function pintarForm(datos)
 		// PINTA ELEMENTOS
 		for(var key in datos.especificas[keyGroup])
 		{
-			var _div = $('<div></div>').attr('name', key);
+			var _div = $('<div></div>').attr({'name':key,'size':'40'}).addClass('form-group');
 			var _name = $('<input></input>').attr({'type':'text','size':'15'}).val(key);
 			var _val = $('<input></input>').attr('type','text').val(datos.especificas[keyGroup][key]);
 			// BOTON QUE ELIMINA EL ATRIBUTO
-			var _span = $('<span></span>').addClass('glyphicon glyphicon-remove-sign').text(' ');
+			var _span = $('<span></span>').addClass('glyphicon glyphicon-remove').text(' ');
 			var _btn = $('<button></button>').attr({'type':'button', 'onclick':"eliminar(this,'" + keyGroup + "','" + key + "');"}).addClass('btn btn-danger btn-xs').append(_span);
-			_div.append(_name, '&nbsp;', _val, '&nbsp;', _btn, '<br>');
+			_div.append(_name, '&nbsp;', _val, '&nbsp;', _btn);
 			_divGroup.append(_div);
 		}
 		$('#espc').append(_divGroup);
