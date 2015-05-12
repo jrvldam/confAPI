@@ -2,24 +2,7 @@ var datos = {};
 
 $(document).ready(function()
 {
-	$.getJSON('/dir',function(lista)
-		{
-			console.log('lista: ' + JSON.stringify(lista));
-			var strLista = 'ficheros guardados:';
-			if(lista.error)
-			{
-				// HACER ALGOR
-			}
-			else
-			{
-				for(var i = 0; i < lista.length; i++)
-				{
-					var aux = lista[i].slice(0,-5);
-					i === 0? (strLista += ' ' + aux) : (strLista += ', ' + aux);
-				}
-				$('#listaDir').append('<small>' + strLista + '</small>');
-			}
-		});
+	listaFicheros();
 	// CREA CONF DE API NUEVA
 	$('#crear').click(function()
 		{
@@ -95,6 +78,7 @@ $(document).ready(function()
 				.done(function( mensaje ) 
 				{
 				    alert("Guardado: " + mensaje);
+				    listaFicheros();
 				});
 			}
 			else
@@ -222,7 +206,25 @@ function gnrlEditada(elemento, keyGnrl)
 	pintarForm(datos);
 }
 
-function noEditar()
+function listaFicheros()
 {
-	alert('noEditar() no implementada');
+	$.getJSON('/dir',function(lista)
+		{
+			console.log('lista: ' + JSON.stringify(lista));
+			var strLista = 'ficheros guardados:';
+			if(lista.error)
+			{
+				// HACER ALGOR
+			}
+			else
+			{
+				for(var i = 0; i < lista.length; i++)
+				{
+					var aux = lista[i].slice(0,-5);
+					i === 0? (strLista += ' ' + aux) : (strLista += ', ' + aux);
+				}
+				$('#listaDir').empty();
+				$('#listaDir').append('<small>' + strLista + '</small>');
+			}
+		});
 }
