@@ -12,8 +12,6 @@ router.get('/', function(req, res)
 				}
 				else
 				{
-					console.log(files);
-					//var aux = JSON.parse(files);
 					res.send(files);
 				}
 			});
