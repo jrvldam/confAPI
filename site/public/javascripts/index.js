@@ -211,7 +211,6 @@ function listaFicheros()
 {
 	$.getJSON('/dir',function(lista)
 		{
-			console.log('lista: ' + JSON.stringify(lista));
 			var strLista = 'ficheros guardados:';
 			if(lista.error)
 			{
