@@ -7,24 +7,18 @@ $(document).ready(function()
 	$('#crear').click(function()
 		{
 			datos = undefined;
-			datos = {
-				"generales": {
-					"uri": "",
-					"txtID": ""
-				},
-				"especificas": {}
-			}
+			datos = { "generales": { "uri": "", "txtID": "" }, "especificas": {} };
 			$("#gnrl").empty();
 			$("#espc").empty();
-			$("#cajaAPI").addClass("toHide");
-			$('#btnFind').addClass('toHide');
+			$("#cajaAPI").hide();
+			$('#btnFind').hide();
 			$("h4").text("");
 			pintarForm(datos);
 		});
 	// LLAMA Y EDITA CONF DE API
 	$("#editar").click(function()
 		{
-			$("#cajaAPI").toggle().focus().keyup(function()
+			$("#cajaAPI").fadeToggle('fast').focus().keyup(function()
 				{
 					if($('#cajaAPI').val().length > 0)
 					{
@@ -35,12 +29,12 @@ $(document).ready(function()
 						$('#btnFind').attr('disabled','true');
 					}
 				});
-			$('#btnFind').toggle().click(function()
+			$('#btnFind').fadeToggle('fast').click(function()
 			{
 				var nomAPI = $.trim($("#cajaAPI").val());
 				if(nomAPI)
 				{
-					$.getJSON('/datos?name=' + nomAPI, function(datosIn)
+					$.getJSON('/datos?name=' + nomAPI + '&ts=' + $.now(), function(datosIn)
 					{
 						if(datosIn.error)
 						{
@@ -50,8 +44,8 @@ $(document).ready(function()
 						{
 							datos = datosIn;
 							pintarForm(datos);
-							$("#cajaAPI").toggle();
-							$('#btnFind').toggle();
+							$("#cajaAPI").fadeToggle('fast');
+							$('#btnFind').fadeToggle('fast');
 						}
 					});
 				}
@@ -65,12 +59,7 @@ $(document).ready(function()
 			if(uri.length > 0 && txt.length > 0)
 			{
 				var cadena = JSON.stringify(datos);
-				$.ajax(
-				{
-				  method: "POST",
-				  url: "/get",
-				  data: {datos: cadena}
-				})
+				$.ajax( { method: "POST", url: "/get", data: {datos: cadena} })
 				.fail(function()
 				{
 					alert('Se ha producido un error en la escritura :-(');
@@ -89,7 +78,7 @@ $(document).ready(function()
 	// AGREGA UN NUEVO GRUPO A LAS CONF ESPECIFICAS
 	$('#masGroup').click(function()
 		{
-			$('#newGroup').toggle(); // removeClass('toHide');
+			$('#newGroup').fadeToggle('fast');
 		});
 	$('#newGroupName').keyup(function()
 		{
@@ -107,7 +96,7 @@ $(document).ready(function()
 			var name = $('#newGroupName').val();
 			datos.especificas[name] = {};
 			$('#newGroupName').val(undefined);
-			$('#newGroup').toggle();
+			$('#newGroup').fadeToggle('fast');
 			pintarForm(datos);
 		});
 });
@@ -147,7 +136,7 @@ function pintarForm(datos)
 		var _spanNewGroup = $('<span></span>').addClass('glyphicon glyphicon-plus').text(' ');
 		var _btnNewGroup = $('<button></button>').attr('type','button').addClass('btn btn-primary btn-sm').append(_spanNewGroup).click(function()
 			{
-				$(this).nextAll('span').empty().toggle(); 
+				$(this).nextAll('span').empty().fadeToggle('fast'); 
 				var _nombre = $('<input></input>').attr({'type':'text','size':'15','placeholder':'nombre'}).keyup(function()
 					{
 						if($(this).val().length > 0)
@@ -191,7 +180,6 @@ function pintarForm(datos)
 		$('#espc').append(_divGroup);
 	}
 	$('#myForm').removeClass('toHide');
-	console.log(JSON.stringify(datos));
 }
 
 function eliminar(elemento, keyGroup, key)
@@ -209,12 +197,12 @@ function gnrlEditada(elemento, keyGnrl)
 
 function listaFicheros()
 {
-	$.getJSON('/dir',function(lista)
+	$.getJSON('/dir?ts=' + $.now(),function(lista)
 		{
 			var strLista = 'ficheros guardados:';
 			if(lista.error)
 			{
-				// HACER ALGOR
+				strLista += ' - ';
 			}
 			else
 			{
